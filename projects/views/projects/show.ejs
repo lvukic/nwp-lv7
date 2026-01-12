@@ -1,0 +1,68 @@
+<% /* Show details of a single project */ %>
+
+<h2><%= project.naziv %></h2>
+<p><strong>Opis:</strong> <%= project.opis || "Nema opisa" %></p>
+<p><strong>Cijena:</strong> <%= project.cijena || 0 %> €</p>
+<p><strong>Obavljeni poslovi:</strong> <%= project.obavljeniPoslovi || "Nema podataka" %></p>
+<p><strong>Datum početka:</strong> <%= project.datumPocetka ? project.datumPocetka.toISOString().split('T')[0] : "N/A" %></p>
+<p><strong>Datum završetka:</strong> <%= project.datumZavrsetka ? project.datumZavrsetka.toISOString().split('T')[0] : "N/A" %></p>
+
+<div class="mb-4">
+    <a href="/projects/<%= project._id %>/edit" class="btn btn-warning">Uredi projekt</a>
+    <form action="/projects/<%= project._id %>?_method=DELETE" method="POST" class="d-inline">
+        <button class="btn btn-danger">Obriši projekt</button>
+    </form>
+    <a href="/projects" class="btn btn-secondary">Nazad na listu</a>
+</div>
+
+<hr>
+
+<h3>Članovi tima</h3>
+
+<% if (project.teamMembers.length === 0) { %>
+    <p>Nema članova tima.</p>
+<% } else { %>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Ime</th>
+                <th>Uloga</th>
+                <th>Email</th>
+                <th>Akcije</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% project.teamMembers.forEach(member => { %>
+            <tr>
+                <td><%= member.ime %></td>
+                <td><%= member.uloga || "" %></td>
+                <td><%= member.email || "" %></td>
+                <td>
+                    <form action="/projects/<%= project._id %>/team/<%= member._id %>?_method=DELETE" method="POST" class="d-inline">
+                        <button class="btn btn-sm btn-danger">Obriši</button>
+                    </form>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+<% } %>
+
+<hr>
+
+<h4>Dodaj novog člana tima</h4>
+<form action="/projects/<%= project._id %>/team" method="POST" class="mb-3">
+    <div class="mb-2">
+        <label for="ime" class="form-label">Ime <span class="text-danger">*</span></label>
+        <input type="text" id="ime" name="ime" class="form-control" required>
+    </div>
+    <div class="mb-2">
+        <label for="uloga" class="form-label">Uloga</label>
+        <input type="text" id="uloga" name="uloga" class="form-control">
+    </div>
+    <div class="mb-2">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" id="email" name="email" class="form-control">
+    </div>
+    <button class="btn btn-success">Dodaj člana</button>
+</form>

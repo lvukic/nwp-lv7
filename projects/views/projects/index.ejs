@@ -1,0 +1,29 @@
+<div class="d-flex justify-content-between mb-3">
+    <h2>Lista projekata</h2>
+    <a href="/projects/new" class="btn btn-primary">+ Novi projekt</a>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Naziv</th>
+            <th>Cijena</th>
+            <th>Akcije</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% projects.forEach(p => { %>
+        <tr>
+            <td><%= p.naziv %></td>
+            <td><%= p.cijena %> €</td>
+            <td>
+                <a href="/projects/<%= p._id %>" class="btn btn-info btn-sm">Detalji</a>
+                <a href="/projects/<%= p._id %>/edit" class="btn btn-warning btn-sm">Uredi</a>
+                <form action="/projects/<%= p._id %>?_method=DELETE" method="POST" class="d-inline">
+                    <button class="btn btn-danger btn-sm">Obriši</button>
+                </form>
+            </td>
+        </tr>
+        <% }) %>
+    </tbody>
+</table>

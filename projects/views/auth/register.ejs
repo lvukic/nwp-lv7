@@ -1,0 +1,21 @@
+<h2>Registracija</h2>
+
+<form method="POST" action="/register">
+    <div class="mb-3">
+        <label>Korisničko ime</label>
+        <input name="username" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Email</label>
+        <input type="email" name="email" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label>Lozinka</label>
+        <input type="password" name="password" class="form-control" required>
+    </div>
+
+    <button class="btn btn-success">Registriraj se</button>
+    <a href="/login" class="btn btn-link">Prijava</a>
+</form>
