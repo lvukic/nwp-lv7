@@ -1,13 +1,14 @@
 <div class="d-flex justify-content-between mb-3">
-    <h2>Lista projekata</h2>
+    <h2><%= title %></h2>
     <a href="/projects/new" class="btn btn-primary">+ Novi projekt</a>
 </div>
 
-<table class="table table-bordered">
-    <thead>
+<table class="table table-bordered bg-white shadow-sm">
+    <thead class="table-dark">
         <tr>
             <th>Naziv</th>
             <th>Cijena</th>
+            <th>Uloga</th>
             <th>Akcije</th>
         </tr>
     </thead>
@@ -17,11 +18,24 @@
             <td><%= p.naziv %></td>
             <td><%= p.cijena %> €</td>
             <td>
-                <a href="/projects/<%= p._id %>" class="btn btn-info btn-sm">Detalji</a>
-                <a href="/projects/<%= p._id %>/edit" class="btn btn-warning btn-sm">Uredi</a>
-                <form action="/projects/<%= p._id %>?_method=DELETE" method="POST" class="d-inline">
-                    <button class="btn btn-danger btn-sm">Obriši</button>
-                </form>
+                <% if(p.voditelj.toString() === currentUser._id.toString()) { %>
+                    <span class="badge bg-primary">Voditelj</span>
+                <% } else { %>
+                    <span class="badge bg-info text-dark">Član</span>
+                <% } %>
+            </td>
+            <td>
+                <div class="btn-group">
+                    <a href="/projects/<%= p._id %>" class="btn btn-info btn-sm">Detalji</a>
+                    
+                    <% if(p.voditelj.toString() === currentUser._id.toString()) { %>
+                        <a href="/projects/<%= p._id %>/edit" class="btn btn-warning btn-sm">Uredi</a>
+                        
+                        <form action="/projects/<%= p._id %>?_method=DELETE" method="POST" class="d-inline">
+                            <button class="btn btn-danger btn-sm" onclick="return confirm('Sigurno obrisati?')">Obriši</button>
+                        </form>
+                    <% } %>
+                </div>
             </td>
         </tr>
         <% }) %>

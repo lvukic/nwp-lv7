@@ -33,7 +33,7 @@ router.get('/login', (req, res) => {
     res.render('auth/login');
 });
 
-// LOGIN POST
+// LOGIN POST (u routes/auth.js)
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -43,12 +43,21 @@ router.post('/login', async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.send("Neispravna lozinka");
 
+    // Spremanje u sesiju
     req.session.user = {
-        id: user._id,
-        username: user.username
+        _id: user._id, 
+        username: user.username,
+        email: user.email
     };
 
-    res.redirect('/projects');
+    // KLJUČNO: Eksplicitno spremi sesiju i tek onda redirectaj
+    req.session.save((err) => {
+        if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).send("Greška pri prijavi");
+        }
+        res.redirect('/projects');
+    });
 });
 
 // LOGOUT

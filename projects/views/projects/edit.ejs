@@ -1,36 +1,43 @@
-<h2>Uredi projekt</h2>
+<div class="container mt-4">
+    <h2>Uredi projekt: <%= project.naziv %></h2>
+    <hr>
+    <form action="/projects/<%= project._id %>?_method=PUT" method="POST">
+        <div class="mb-3">
+            <label class="form-label">Naziv projekta</label>
+            <input type="text" name="naziv" class="form-control" value="<%= project.naziv %>" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Opis</label>
+            <textarea name="opis" class="form-control" rows="3"><%= project.opis %></textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Cijena (€)</label>
+            <input type="number" name="cijena" class="form-control" value="<%= project.cijena %>">
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Datum početka</label>
+                <input type="date" name="datumPocetka" class="form-control" 
+                    value="<%= project.datumPocetka ? project.datumPocetka.toISOString().split('T')[0] : '' %>">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Datum završetka</label>
+                <input type="date" name="datumZavrsetka" class="form-control" 
+                    value="<%= project.datumZavrsetka ? project.datumZavrsetka.toISOString().split('T')[0] : '' %>">
+            </div>
+        </div>
 
-<form action="/projects/<%= project._id %>?_method=PUT" method="POST">
+        <div class="mb-3">
+            <label class="form-label">Obavljeni poslovi</label>
+            <textarea name="obavljeniPoslovi" class="form-control" rows="2"><%= project.obavljeniPoslovi %></textarea>
+        </div>
 
-    <div class="mb-3">
-        <label>Naziv</label>
-        <input type="text" name="naziv" class="form-control" value="<%= project.naziv %>">
-    </div>
-
-    <div class="mb-3">
-        <label>Opis</label>
-        <textarea name="opis" class="form-control"><%= project.opis %></textarea>
-    </div>
-
-    <div class="mb-3">
-        <label>Cijena</label>
-        <input type="number" name="cijena" class="form-control" value="<%= project.cijena %>">
-    </div>
-
-    <div class="mb-3">
-        <label>Obavljeni poslovi</label>
-        <input type="text" name="obavljeniPoslovi" class="form-control" value="<%= project.obavljeniPoslovi %>">
-    </div>
-
-    <div class="mb-3">
-        <label>Datum početka</label>
-        <input type="date" name="datumPocetka" class="form-control" value="<%= project.datumPocetka.toISOString().split('T')[0] %>">
-    </div>
-
-    <div class="mb-3">
-        <label>Datum završetka</label>
-        <input type="date" name="datumZavrsetka" class="form-control" value="<%= project.datumZavrsetka.toISOString().split('T')[0] %>">
-    </div>
-
-    <button class="btn btn-primary">Spremi izmjene</button>
-</form>
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Spremi promjene</button>
+            <a href="/projects/<%= project._id %>" class="btn btn-secondary">Odustani</a>
+        </div>
+    </form>
+</div>

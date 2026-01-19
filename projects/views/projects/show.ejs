@@ -1,68 +1,84 @@
-<% /* Show details of a single project */ %>
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0"><%= project.naziv %></h2>
+            <div>
+                <% if(currentUser._id.toString() === project.voditelj._id.toString() && !project.arhiviran) { %>
+                    <a href="/projects/<%= project._id %>/edit" class="btn btn-warning btn-sm">Uredi osnovne podatke</a>
+                <% } %>
+                
+                <% if(project.arhiviran) { %>
+                    <span class="badge bg-secondary p-2">ARHIVIRAN</span>
+                <% } %>
+            </div>
+        </div>
+        
+        <p class="lead"><%= project.opis %></p>
+        <hr>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Cijena:</strong> <%= project.cijena %> €</p>
+                <p><strong>Voditelj:</strong> <%= project.voditelj.username %></p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Početak:</strong> <%= project.datumPocetka ? project.datumPocetka.toDateString() : 'N/A' %></p>
+                <p><strong>Završetak:</strong> <%= project.datumZavrsetka ? project.datumZavrsetka.toDateString() : 'N/A' %></p>
+            </div>
+        </div>
 
-<h2><%= project.naziv %></h2>
-<p><strong>Opis:</strong> <%= project.opis || "Nema opisa" %></p>
-<p><strong>Cijena:</strong> <%= project.cijena || 0 %> €</p>
-<p><strong>Obavljeni poslovi:</strong> <%= project.obavljeniPoslovi || "Nema podataka" %></p>
-<p><strong>Datum početka:</strong> <%= project.datumPocetka ? project.datumPocetka.toISOString().split('T')[0] : "N/A" %></p>
-<p><strong>Datum završetka:</strong> <%= project.datumZavrsetka ? project.datumZavrsetka.toISOString().split('T')[0] : "N/A" %></p>
-
-<div class="mb-4">
-    <a href="/projects/<%= project._id %>/edit" class="btn btn-warning">Uredi projekt</a>
-    <form action="/projects/<%= project._id %>?_method=DELETE" method="POST" class="d-inline">
-        <button class="btn btn-danger">Obriši projekt</button>
-    </form>
-    <a href="/projects" class="btn btn-secondary">Nazad na listu</a>
+        <form action="/projects/<%= project._id %>/poslovi?_method=PUT" method="POST" class="mt-3 p-3 bg-light border rounded">
+            <div class="mb-2">
+                <label class="form-label"><strong>Obavljeni poslovi:</strong></label>
+                <textarea name="obavljeniPoslovi" class="form-control" rows="3"><%= project.obavljeniPoslovi %></textarea>
+            </div>
+            <button class="btn btn-success btn-sm">Spremi promjene u poslovima</button>
+        </form>
+    </div>
 </div>
 
-<hr>
-
-<h3>Članovi tima</h3>
-
-<% if (project.teamMembers.length === 0) { %>
-    <p>Nema članova tima.</p>
-<% } else { %>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Ime</th>
-                <th>Uloga</th>
-                <th>Email</th>
-                <th>Akcije</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% project.teamMembers.forEach(member => { %>
-            <tr>
-                <td><%= member.ime %></td>
-                <td><%= member.uloga || "" %></td>
-                <td><%= member.email || "" %></td>
-                <td>
-                    <form action="/projects/<%= project._id %>/team/<%= member._id %>?_method=DELETE" method="POST" class="d-inline">
-                        <button class="btn btn-sm btn-danger">Obriši</button>
-                    </form>
-                </td>
-            </tr>
+<div class="row">
+    <div class="col-md-6">
+        <h3>Članovi tima</h3>
+        <ul class="list-group mb-3 shadow-sm">
+            <% if(project.clanovi_tima.length === 0) { %>
+                <li class="list-group-item text-muted">Nema dodanih članova.</li>
+            <% } %>
+            <% project.clanovi_tima.forEach(clan => { %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong><%= clan.username %></strong><br>
+                        <small class="text-muted"><%= clan.email %></small>
+                    </div>
+                </li>
             <% }) %>
-        </tbody>
-    </table>
-<% } %>
+        </ul>
+    </div>
+    
+    <% if(currentUser._id.toString() === project.voditelj._id.toString() && !project.arhiviran) { %>
+    <div class="col-md-6">
+        <div class="card p-3 shadow-sm">
+            <h4>Upravljanje timom</h4>
+            <form action="/projects/<%= project._id %>/team" method="POST">
+                <label class="form-label">Odaberi korisnika za tim:</label>
+                <select name="korisnikId" class="form-select mb-2">
+                    <% sviKorisnici.forEach(u => { %>
+                        <option value="<%= u._id %>"><%= u.username %></option>
+                    <% }) %>
+                </select>
+                <button class="btn btn-primary w-100">Dodaj u tim</button>
+            </form>
+            
+            <hr>
+            
+            <form action="/projects/<%= project._id %>/archive?_method=PUT" method="POST">
+                <button class="btn btn-outline-danger w-100">Arhiviraj projekt</button>
+            </form>
+        </div>
+    </div>
+    <% } %>
+</div>
 
-<hr>
-
-<h4>Dodaj novog člana tima</h4>
-<form action="/projects/<%= project._id %>/team" method="POST" class="mb-3">
-    <div class="mb-2">
-        <label for="ime" class="form-label">Ime <span class="text-danger">*</span></label>
-        <input type="text" id="ime" name="ime" class="form-control" required>
-    </div>
-    <div class="mb-2">
-        <label for="uloga" class="form-label">Uloga</label>
-        <input type="text" id="uloga" name="uloga" class="form-control">
-    </div>
-    <div class="mb-2">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" id="email" name="email" class="form-control">
-    </div>
-    <button class="btn btn-success">Dodaj člana</button>
-</form>
+<div class="mt-4">
+    <a href="/projects" class="btn btn-secondary">Nazad na listu</a>
+</div>

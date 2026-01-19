@@ -1,19 +1,15 @@
 const mongoose = require('mongoose');
 
-const TeamMemberSchema = new mongoose.Schema({
-    ime: { type: String, required: true },
-    uloga: String,
-    email: String
-});
-
 const ProjectSchema = new mongoose.Schema({
     naziv: { type: String, required: true },
     opis: String,
     cijena: Number,
-    obavljeniPoslovi: String,
+    obavljeniPoslovi: { type: String, default: "" },
     datumPocetka: Date,
     datumZavrsetka: Date,
-    teamMembers: [TeamMemberSchema]
+    arhiviran: { type: Boolean, default: false },
+    voditelj: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    clanovi_tima: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 
 module.exports = mongoose.model('Project', ProjectSchema);
